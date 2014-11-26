@@ -83,18 +83,12 @@ new Chorddiagram.Chart({
             <br />value:    strength of the link
             <br />}
             <br /><br />possible values: any in the above described format
-            <br />{   source:   name of the node from which the connection comes
-            <br />target:   name of the node to which the connection goes
-            <br />value:    strength of the link
-            <br />}
-            <br /><br />possible values: any in the above described format
         </td>
     </tr>
     <tr>
         <td>elem</td>
         <td>
             is the id of a 'div' tag in which the chord diagram should be drawn 
-			<br /><br />possible values: any valid id of a 'div' tag
 			<br /><br />possible values: any valid id of a 'div' tag
         </td>
     </tr>
