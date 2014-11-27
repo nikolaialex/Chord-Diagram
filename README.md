@@ -68,7 +68,7 @@ new Chorddiagram.Chart({
 	});
 ```
 
-##Mandatory Attributes
+## Mandatory Attributes
 <table>
     <tr>
         <th>Attribute</th>
@@ -94,7 +94,7 @@ new Chorddiagram.Chart({
     </tr>
 </table>
 
-##Optional Attributes
+## Optional Attributes
 <table>
     <tr>
         <th>Attribute</th>

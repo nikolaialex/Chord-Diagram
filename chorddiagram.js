@@ -68,9 +68,7 @@
                                     default: null
                                     possible values: any function
         */
-
-        
-        /*
+		/*
             Initializing default values
         */
         var default_colorset = [
@@ -80,7 +78,6 @@
             "#FFE7BA", "#FFC1C1"
         ];
         var default_tooltipElem = null,
-            default_nodesColorSchema = 'blue',
             default_segmentSize = 'outgoing', //defines if the size of the chord on the side of a node represents the outgoing value or incoming value
             default_directed = true,
             default_sorting = null,
@@ -88,8 +85,7 @@
             default_tooltipSetting = true,
             default_sortingTooltip = 'source',
             default_sortingOrderTooltip = true,         //true means ascending, false means descending
-            default_tooltipOrientation = "horizontal";   
-
+            default_tooltipOrientation = "horizontal";
 
         /*
             Initializing the attributes
@@ -117,6 +113,8 @@
             In the next lines we calculate the number of ticks which schould be displayed. These values are used if no other values for 'numberOfTicks' and 'numberOfTicksLabel' were passed
         */
         var numberOfTicks = 0, numberOfTicksLabel = 0;
+
+
         for (var count = 0; count < chordMatrix.length; count++) {
             for (var count2 = 0; count2 < chordMatrix.length; count2++) {
                 numberOfTicks = numberOfTicks + chordMatrix[count][count2];
@@ -148,7 +146,7 @@
         }
 
         //Define where the svg will be and how it will look like
-        var svg = d3.select('#'+plotElem).append("svg")
+        var svg = d3.select('#' + plotElem).append("svg")
             .attr("width", plotWidth)
             .attr("height", plotHeight)
             .append("g")
@@ -172,52 +170,43 @@
             .attr("d", arc)
             .style("fill", function (d) { return nodes[d.index].color; })
             .style("stroke", function (d) { return nodes[d.index].color; })
-            .attr("id", function (d, i) { return 'group-' + plotElem + '' + d.index });
+            .attr("id", function (d, i) { return 'group-' + plotElem + '' + d.index; });
 
         g.append("svg:text")    //name label of node in the outer circle segment
-                .attr("dx", function (d) {
-                    if (d.endAngle - d.startAngle < 0.01) {
-                        return 0;
+            .attr("dx", function (d) {
+                if (d.endAngle - d.startAngle < 0.01) {
+                    return 0;
+                }
+                return 10;
+            }) //larger number puts the label farer away from the border
+            .attr("dy", function (d) {
+                if (d.endAngle - d.startAngle < 0.01) {
+                    return 3;
+                }
+                return (outerRadius - innerRadius) - (outerRadius - innerRadius - 12) / 2;
+            })
+            .style("fill", "white")
+            .style("font", "12px Arial")
+            .append("svg:textPath")
+            .attr("xlink:href", function (d) { return '#group-' + plotElem + '' + d.index; })
+            .text(function (d) {
+                var segmentlength = 2 * outerRadius * Math.PI * ((d.endAngle - d.startAngle) / 2 / Math.PI);
+                if (d.endAngle - d.startAngle < 0.01 || segmentlength < nodes[d.index].label.length * 15) {
+                    var countchar = (segmentlength - (segmentlength % 15)) / 15; //says how many characters can be shown theoretically (Assumption: a character needs 15px)
+                    if (countchar <= 0) {
+                        return null;
                     }
-                    else {
-                        return 10;
-                    }
-                }) //larger number puts the label farer away from the border
-                .attr("dy", function (d) {
-                    if (d.endAngle - d.startAngle < 0.01) {
-                        return 3;
-                    }
-                    else {
-                        return (outerRadius - innerRadius) - (outerRadius - innerRadius - 12) / 2;
-                    }
-                })
-                .style("fill", "white")
-                .style("font", "12px Arial")
-                .append("svg:textPath")
-                .attr("xlink:href", function (d) { return '#group-' + plotElem + '' + d.index; })
-                .text(function (d) {
-                    var segmentlength = 2 * outerRadius * Math.PI * ((d.endAngle - d.startAngle) / 2 / Math.PI);
-                    if (d.endAngle - d.startAngle < 0.01 || segmentlength < nodes[d.index].label.length * 15) {
-                        var countchar = (segmentlength - (segmentlength % 15)) / 15; //says how many characters can be shown theoretically (Assumption: a character needs 15px)
-                        if (countchar <= 0) {
-                            return (null);
-                        }
-                        else {
-                            return (nodes[d.index].label.slice(0, Math.max(0, countchar - 1)) + '...');
-                        }
-                    }
-                    else {
-                        return nodes[d.index].label;
-                    }
-                });
+                    return (nodes[d.index].label.slice(0, Math.max(0, countchar - 1)) + '...');
+                }
+                return nodes[d.index].label;
+            });
 
         var ticks = g.selectAll("g")
-                .data(groupTicks)
-                .enter().append("g")
-                .attr("transform", function (d) {
-                    return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-                    + "translate(" + outerRadius + ",0)";
-                });
+            .data(groupTicks)
+            .enter().append("g")
+            .attr("transform", function (d) {
+                return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")" + "translate(" + outerRadius + ",0)";
+            });
 
         ticks.append("line")    //small lines (scale) on the outside of the outer circle segment
             //every fifth tick is shown. If more ticks should be shown, the value of d.show can be changed in the fundtion groupTicks()
@@ -265,7 +254,7 @@
             })
             .on("click", function (d) {
                 if (typeof _config.onClickLink === 'undefined' || _config.onClickLink === null) {
-                    console.log("No function implemented")
+                    console.log("No function implemented");
                 }
                 else {
                     _config.onClickLink(d);
@@ -283,7 +272,7 @@
             })
             .on("click", function (d) {
                 if (typeof _config.onClickNode === 'undefined' || _config.onClickNode === null) {
-                    console.log("No function implemented")
+                    console.log("No function implemented");
                 }
                 else {
                     _config.onClickNode(nodes[d.index]);
@@ -322,7 +311,7 @@
                 Format of the return value:
                     The function returns an object with a list of the unique nodes and a matrix with the data about the links between the nodes
             */
-            
+
             /*
                 A list of all nodes without duplicates has to be created. The list consists of an object for each node with the attributes 'label', 'color', 'outgoingTotal',
                 'incomingTotal', 'total', 'numberOfLinks'
@@ -333,7 +322,8 @@
             data.forEach(function (d) {
                 listOfNodes.push(d.source);     //reading all the node names and storing them in the array "listOfNodes"
                 listOfNodes.push(d.target);     //reading all the node names and storing them in the array "listOfNodes"
-            })
+            });
+
             listOfNodes = (listOfNodes.filter(function onlyUnique(value, index, self) { return self.indexOf(value) === index; }));  //filtering the listOfNodes, so no duplicates remain
 
             listOfNodes.forEach(function (node) {
@@ -364,7 +354,7 @@
                     'incomingTotal': incomingTotal,
                     'total': total,
                     'numberOfLinks': numberOfLinks
-                }
+                };
                 uniqueNodes.push(object);
             });
             if (sorting !== null) {
@@ -375,6 +365,7 @@
                 From the data a matrix should be created which stores the values of the connections in a matrix form
             */
             var chordMatrix = [];
+
             //fill Matrix with '0's
             for (var count = 0; count < uniqueNodes.length; count++) {
                 var row = [];
@@ -403,7 +394,7 @@
                     To achieve this new representation, we invert the matrix with the values by calling the function 'invertQuadraticMatrix()'.
                 */
                 chordMatrix = invertQuadraticMatrix(chordMatrix);
-            };
+            }
 
             /*
                 Each node gets a unique color now
@@ -419,7 +410,7 @@
             var count = 0;
             uniqueNodes.forEach(function (node) {
                 node.color = colors[count++];
-            })
+            });
 
             if (directed) {
                 return { nodes: uniqueNodes, chordMatrix: chordMatrix };
@@ -427,8 +418,11 @@
             else {
                 //if the graph should be undirected, the vallues are aggregated
                 var _chordMatrix = [];
+
+
                 for (var count = 0; count < uniqueNodes.length; count++) {
                     var row = [];
+
                     for (var count2 = 0; count2 < uniqueNodes.length; count2++) {
                         if (count !== count2) {
                             row[count2] = chordMatrix[count][count2] + chordMatrix[count2][count];
@@ -461,9 +455,9 @@
             */
 
             var nodeID = d.index;
-            if (tooltipSetting!=='none') {
+            if (tooltipSetting !== 'none') {
                 var details = getDetailsOnNode(nodeID),     //'details' contains a list of objects. Each object is a connection between two nodes. Each object contains the attributes 'sourceColor', 'source', 'targetColor', 'target' and 'data'. The number of objects in the array is not limited.
-                    detailstext = '<h4 class=chorddiagram-h4>' + nodes[nodeID].label + '</h4>';   
+                    detailstext = '<h4 class=chorddiagram-h4>' + nodes[nodeID].label + '</h4>'; 
                 details.forEach(function (d) {
                     /*
                         In this loop the information which are passed in the array 'details' is joined to a readable html text. 
@@ -474,8 +468,7 @@
                 try {
                     //before displaying the tooltip, potentially still existing tooltips are removed
                     document.getElementById("tooltip").remove();
-                }
-                catch (err) { };
+                } catch (error) { }
                 showTooltip(100, 0.9, detailstext, d3.event.pageX + 15, d3.event.pageY);
             }
 
@@ -504,8 +497,8 @@
             var nodeID = node.index;
             try {
                 document.getElementById("tooltip").remove();    //removing the tooltip
-            }
-            catch (err) { };
+            } catch (error) { }
+
             svg.selectAll(".chorddiagram-chord path")
                 .filter(function (d) {
                     return d.source.index !== nodeID && d.target.index !== nodeID;      //looks which chords are connected to the node the mouse is on
@@ -536,21 +529,20 @@
             _config.data.forEach(function (link) {
                 if (link.source === nodeName || link.target === nodeName) {
                     var object = {
-                        "sourceColor": nodes.filter(function (node) { return node.label === link.source })[0].color,
+                        "sourceColor": nodes.filter(function (node) { return node.label === link.source; })[0].color,
                         "source": link.source,
-                        "targetColor": nodes.filter(function (node) { return node.label === link.target })[0].color,
+                        "targetColor": nodes.filter(function (node) { return node.label === link.target; })[0].color,
                         "target": link.target,
                         "data": link.value
-                    }
+                    };
                     links.push(object);
                 }
-            })
+            });
 
-                
             links.sort(dynamicSort(sortingTooltip, !sortingOrderTooltip));      //Here the links are sorted. The links can be sorted by any attribute of the object. It can also be reversed.
             return links;
         }
-        
+
         /*
             Functions for interacting with chords
         */
@@ -571,8 +563,8 @@
 
             var sourceID = chord.source.index,
                 targetID = chord.target.index;
-                
-            if (tooltipSetting!=='none') {
+
+            if (tooltipSetting !== 'none') {
                 var details = getDetailsOnChord(sourceID, targetID),   //'details' contains a list of objects. Each object is a connection between two nodes. Each object contains the attributes 'sourceColor', 'source', 'targetColor', 'target' and 'data'. The length of the array is maximum 2, because a connection between two nodes can just go from A to B or B two A.
                     detailstext = "",
                     sum = 0;
@@ -584,7 +576,7 @@
                     */
                     sum = sum + link.data;  //'sum' is the aggregation of all data (determines the value of a connection)
                     detailstext = detailstext + (queryColorDot(link.sourceColor, 15) + ' ' + queryColorDot(link.targetColor, 15) + ' ' + link.source + '-' + link.target + ' (' + link.data + ')<br/>');
-                })
+                });
 
                 if (!directed) {
                     // the 'sum' is just shown if the chord diagram is undirected
@@ -594,8 +586,7 @@
                 try {
                     //before displaying the tooltip, potentially still existing tooltips are removed
                     document.getElementById("tooltip").remove();
-                }
-                catch (err) { };
+                } catch (error) { }
                 showTooltip(100, 0.9, detailstext, d3.event.pageX + 15, d3.event.pageY);
             }
 
@@ -624,8 +615,7 @@
 
             try {
                 document.getElementById("tooltip").remove();    //removing the tooltip
-            }
-            catch (err) { };
+            } catch (error) { }
             svg.selectAll(".chorddiagram-chord path")
                 .filter(function (d) {
                     return !(d.source.index === chord.source.index && d.target.index === chord.target.index);   //looks up and filters all chords the mouse is not on
@@ -658,15 +648,15 @@
             _config.data.forEach(function (link) {
                 if ((link.source === sourceName && link.target === targetName) || (link.source === targetName && link.target === sourceName)) {
                     var object = {
-                        "sourceColor": nodes.filter(function (node) { return node.label === link.source })[0].color,
+                        "sourceColor": nodes.filter(function (node) { return node.label === link.source; })[0].color,
                         "source": link.source,
-                        "targetColor": nodes.filter(function (node) { return node.label === link.target })[0].color,
+                        "targetColor": nodes.filter(function (node) { return node.label === link.target; })[0].color,
                         "target": link.target,
                         "data": link.value
-                    }
+                    };
                     links.push(object);
                 }
-            })
+            });
 
             links.sort(dynamicSort(sortingTooltip, !sortingOrderTooltip));      //Here the links are sorted. The links can be sorted by any attribute of the object. It can also be reversed.
             return links;
@@ -693,7 +683,7 @@
                 'border-radius: 50%',
                 'width:' + diameter + 'px',
                 'height:' + diameter + 'px',
-                'background:' + color,
+                'background:' + color
             ].join(';') + '"></div>';
         }
         function invertQuadraticMatrix(matrix) {
@@ -711,11 +701,13 @@
             //fill Matrix with '0's
             for (var count = 0; count < matrix.length; count++) {
                 var row = [];
+
                 for (var count2 = 0; count2 < matrix.length; count2++) {
                     row[count2] = 0;
                 }
                 newMatrix[count] = row;
             }
+
             for (var count = 0; count < matrix.length; count++) {
                 for (var count2 = 0; count2 < matrix.length; count2++) {
                     newMatrix[count][count2] = matrix[count2][count];
@@ -736,13 +728,13 @@
                 return function (a, b) {
                     var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
                     return result * sortOrder;
-                }
+                };
             }
             else {
                 return function (a, b) {
                     var result = (a[property] > b[property]) ? -1 : (a[property] < b[property]) ? 1 : 0;
                     return result * sortOrder;
-                }
+                };
             }
         }
         function showTooltip(duration, opacity, text, posLeft, posTop) {
@@ -760,9 +752,10 @@
                 Format of the return value:
                     The function doesn't return a value but it displays a tooltip
             */
+            var tooltip;
             if (tooltipSetting === 'movable') {
                 //if the tooltip should be movable the <div> for the tooltip is created dynamically
-                var tooltip = d3.select("body").append("div")
+                tooltip = d3.select("body").append("div")
                     .attr("id", "tooltip")
                     .attr("class", "chorddiagram-tooltip");
                 tooltip.transition()
@@ -774,7 +767,7 @@
             }
             else {
                 //if the tooltip should appear at a fixed position the div is created in a specific position which is defined in 'tooltipElem'
-                var tooltip = d3.select("#" + tooltipElem).append("div")
+                tooltip = d3.select("#" + tooltipElem).append("div")
                     .attr("id", "tooltip")
                     .attr("class", "chorddiagram-tooltip-fix");
                 tooltip.transition()
