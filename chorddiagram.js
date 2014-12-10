@@ -457,14 +457,27 @@
             var nodeID = d.index;
             if (tooltipSetting !== 'none') {
                 var details = getDetailsOnNode(nodeID),     //'details' contains a list of objects. Each object is a connection between two nodes. Each object contains the attributes 'sourceColor', 'source', 'targetColor', 'target' and 'data'. The number of objects in the array is not limited.
-                    detailstext = '<h4 class=chorddiagram-h4>' + nodes[nodeID].label + '</h4>'; 
+                    detailstext = '<h4 class=chorddiagram-h4>' + nodes[nodeID].label + '</h4>',
+                    detailsList = "",
+                    incomingTotal = 0,
+                    outgoingTotal = 0;
+
+
                 details.forEach(function (d) {
                     /*
                         In this loop the information which are passed in the array 'details' is joined to a readable html text. 
                         This text (variable 'detailstext') will be used to generate a tooltip.
                     */
-                    detailstext = detailstext + (queryColorDot(d.sourceColor, 15) + ' ' + queryColorDot(d.targetColor, 15) + ' ' + d.source + '-' + d.target + ' (' + d.data + ')' + (tooltipOrientation === "horizontal" ? ', ' : '<br/>'));
+                    if (d.source === nodes[nodeID].label) {
+                        outgoingTotal = outgoingTotal + d.data;
+                    }
+                    else {
+                        incomingTotal = incomingTotal + d.data;
+                    }
+                    detailsList = detailsList + (queryColorDot(d.sourceColor, 15) + ' ' + queryColorDot(d.targetColor, 15) + ' ' + d.source + ' - ' + d.target + ' (' + d.data + ')' + (tooltipOrientation === "horizontal" ? ', ' : '<br/>'));
                 });
+                detailstext = detailstext + "(Outgoing: " + outgoingTotal + ", Incoming: " + incomingTotal + ")<br/><br/>";
+                detailstext = detailstext + detailsList;
                 try {
                     //before displaying the tooltip, potentially still existing tooltips are removed
                     document.getElementById("tooltip").remove();
@@ -575,7 +588,7 @@
                         This text (variable 'detailstext') will be used to generate a tooltip.
                     */
                     sum = sum + link.data;  //'sum' is the aggregation of all data (determines the value of a connection)
-                    detailstext = detailstext + (queryColorDot(link.sourceColor, 15) + ' ' + queryColorDot(link.targetColor, 15) + ' ' + link.source + '-' + link.target + ' (' + link.data + ')<br/>');
+                    detailstext = detailstext + (queryColorDot(link.sourceColor, 15) + ' ' + queryColorDot(link.targetColor, 15) + ' ' + link.source + ' - ' + link.target + ' (' + link.data + ')<br/>');
                 });
 
                 if (!directed) {
@@ -770,9 +783,6 @@
                 tooltip = d3.select("#" + tooltipElem).append("div")
                     .attr("id", "tooltip")
                     .attr("class", "chorddiagram-tooltip-fix");
-                tooltip.transition()
-                    .duration(duration)
-                    .style("opacity", opacity);
                 tooltip.html(text);
             }
         }
