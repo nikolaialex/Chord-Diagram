@@ -72,10 +72,7 @@
             Initializing default values
         */
         var default_colorset = [
-            "#8E388E", "#7171C6", "#7D9EC0", "#388E8E", "#71C671", "#8E8E38", "#C5C1AA", "#C67171",
-            "#B0171F", "#9400D3", "#0000FF", "#CAE1FF", "#36648B", "#00F5FF", "#00C78C", "#FF8247",
-            "#BDFCC9", "#32CD32", "#7CFC00", "#C0FF3E", "#FFFF00", "#FFF68F", "#CDAD00", "#FFB90F",
-            "#FFE7BA", "#FFC1C1"
+            "#8E388E", "#7171C6", "#7D9EC0", "#388E8E", "#71C671"
         ];
         var default_tooltipElem = null,
             default_segmentSize = 'outgoing', //defines if the size of the chord on the side of a node represents the outgoing value or incoming value
@@ -403,10 +400,9 @@
                 /*
                     A number of colorcodes are given at the beginning. If more colors are needed, this loop creates additional ones.
                 */
-                for (var count = 0; count < uniqueNodes.length; count++) {
-                    colors.push(randomColor());
-                }
+                colors=colors.concat(generateColors({ "numberOfColors": uniqueNodes.length }));
             }
+
             var count = 0;
             uniqueNodes.forEach(function (node) {
                 node.color = colors[count++];

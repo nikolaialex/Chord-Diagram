@@ -4,7 +4,7 @@ Chord-Diagram
 Before getting started the following libraries and documents have to be included on your website:
 * D3.min.js
 * jquery-1.11.1.js
-* randomColor.js
+* colorGenerator.js
 * chorddiagram.js
 * chordDiagram.css
 
