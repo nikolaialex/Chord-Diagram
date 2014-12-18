@@ -31,8 +31,8 @@ function generateAlternatingDarkColorSet(numberOfColors) {
     */
 
     var hueSet = [5, 105, 20, 200, 50, 170, 80, 320, 140, 70, 240];     //#11 [red(5), green1(105), orange(20), lightblue(200), yellow(50), aqua(170), lightgreen(80), purple(320), green2(140), yellow(70), blue(240)]
-    var saturationSet = [60, 65, 70, 75, 80, 85, 90, 95, 100];      //#9
-    var lightnessSet = [20, 30, 40, 45];               //#4
+    var saturationSet = [60, 65, 70, 75, 80, 85, 90, 95, 100];          //#9
+    var lightnessSet = [20, 30, 40, 45];                                //#4
     var hueNumerator = 0;
     var saturationNumerator = 0;
     var lightnessNumerator = 0;
@@ -129,23 +129,42 @@ function generateSimilarColors(colorName, numberOfColors) {
     var colorDictionary = loadColorDictionary();
     var hueMinimum = colorDictionary[colorName].hueRange[0];
     var hueMaximum = colorDictionary[colorName].hueRange[1];
-
-
+    var saturationMinimum = colorDictionary[colorName].saturationRange[0];
+    var saturationMaximum = colorDictionary[colorName].saturationRange[1];
+    var lightnessMinimum = colorDictionary[colorName].lightnessRange[0];
+    var lightnessMaximum = colorDictionary[colorName].lightnessRange[1];
+    var saturationSet = [50, 60, 70, 80, 90, 100];                  //#6
+    var lightnessSet = [20, 30, 40, 50, 60];                        //#5
+    var hueNumerator = 0;
+    var saturationNumerator = 0;
+    var lightnessNumerator = 0;
+    var count = 1;
     while (numberOfColors > 0) {
         if (colorName !== 'red') {
-            var hue = hueMinimum + Math.round(Math.random() * (hueMaximum - hueMinimum));
+            var hue = hueMinimum + hueNumerator * 10;
         }
         else { //color is red. The spectrum is divided into two parts 
-            var hue = (360 + hueMinimum) + Math.round(Math.random() * ((360 + hueMaximum) - (360 + hueMinimum)));
-            if (hue > 360) {
-                hue = hue - 360;
+            var hue = hueMinimum + hueNumerator * 10;
+            if (hue < 0) {
+                hue = 360 + hue;
             }
         }
-        var saturation = Math.round(Math.random() * 100);
-        var lightness = Math.round(Math.random() * 100);
+        var saturation = saturationMinimum + saturationNumerator * 5;
+        var lightness = lightnessMinimum + lightnessNumerator * 5;
+
+        saturationNumerator++;
+        saturationNumerator = ((saturationMinimum + saturationNumerator * 5) > saturationMaximum) ? 0 : (saturationNumerator);
+        lightnessNumerator++;
+        lightnessNumerator = ((lightnessMinimum + lightnessNumerator * 5) > lightnessMaximum) ? 0 : (lightnessNumerator);
+        hueNumerator++;
+        hueNumerator = ((hueMinimum + hueNumerator * 10) > hueMaximum) ? 0 : (hueNumerator);
+
         var color = (HSL2Hex(hue, saturation / 100, lightness / 100));
-        colorSet.push(color);
-        numberOfColors--;
+        if (color.length <= 7) {
+            colorSet.push(color);
+            numberOfColors--;
+        }
+        else{}
     }
 
     return colorSet;
@@ -157,25 +176,39 @@ function loadColorDictionary() {
         hueRange: null
     };
     colorDictionary['red'] = {
-        hueRange: [-26, 18]
+        hueRange: [-26, 18],
+        saturationRange: [70, 100],
+        lightnessRange: [40, 60]
     };
     colorDictionary['orange'] = {
-        hueRange: [19, 46]
+        hueRange: [19, 46],
+        saturationRange: [70, 100],
+        lightnessRange: [45, 60]
     };
     colorDictionary['yellow'] = {
-        hueRange: [47, 69]
+        hueRange: [47, 69],
+        saturationRange: [70, 100],
+        lightnessRange: [50, 50]
     };
     colorDictionary['green'] = {
-        hueRange: [70, 178]
+        hueRange: [70, 178],
+        saturationRange: [70, 100],
+        lightnessRange: [40, 60]
     };
     colorDictionary['blue'] = {
-        hueRange: [179, 257]
+        hueRange: [179, 257],
+        saturationRange: [70, 100],
+        lightnessRange: [30, 70]
     };
     colorDictionary['purple'] = {
-        hueRange: [258, 282]
+        hueRange: [258, 300],
+        saturationRange: [70, 100],
+        lightnessRange: [40, 70]
     };
     colorDictionary['pink'] = {
-        hueRange: [283, 334]
+        hueRange: [301, 334],
+        saturationRange: [70, 100],
+        lightnessRange: [50, 70]
     };
 
     return colorDictionary;
